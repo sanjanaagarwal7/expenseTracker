@@ -1,0 +1,150 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="col-xs-10 col-sm-6 col-md-6">
+    <div class="card card-style mb-2">
+        <div class="card-body">
+            <div class="chart-container" style="position: relative;">
+                <canvas id="income_vs_expense"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="col-xs-10 col-sm-6 col-md-6">
+    <div class="card card-style mb-2">
+        <div class="card-body">
+            <div class="chart-container" style="position: relative;">
+                <canvas id="income_vs_category"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="col-xs-10 col-sm-6 col-md-6">
+    <div class="card card-style mb-2">
+        <div class="card-body">
+            <div class="chart-container" style="position: relative;">
+                <canvas id="overtime_expenditure"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- AI Insights Section -->
+<div class="col-md-12 mt-4">
+    <div class="card card-style">
+        <div class="card-body text-center">
+            <h5 class="card-title">AI Insights</h5>
+            <button id="getInsights" class="btn btn-primary">Get AI Insights</button>
+            <div id="aiOutput" class="mt-3 p-3 border rounded bg-light text-dark" 
+                style="min-height: 100px; font-family: 'Arial', sans-serif; line-height: 1.6; text-align: left;">
+                <p style="color: gray;">Click the button to fetch AI-based spending insights.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block javascript %}
+<script>
+    let income_vs_expense_data = JSON.parse({{ income_vs_expense | tojson }});
+    let income_category_data = JSON.parse({{ income_category | tojson }});
+
+    Chart.scaleService.updateScaleDefaults('linear', {
+        ticks: { min: 0 }
+    });
+
+    let income_vs_expense_chart = new Chart(income_vs_expense, {
+        type: 'pie',
+        data: {
+            labels: ['expense', 'income'],
+            datasets: [{
+                label: "Income Vs Expenses",
+                data: income_vs_expense_data,
+                backgroundColor: ['#5DA5DA ', '#FAA43A', '#60BD68',
+                    '#B276B2', '#E16851', '#FB8267'],
+                borderWidth: 1,
+                hoverBorderColor: "black",
+                hoverBorderWidth: 2,
+                hoverBackgroundColor: 'rgba(154, 245, 140)',
+                pointHoverRadius: 5
+            }],
+        },
+        options: {
+            title: { display: true, text: "Income Vs Expenses", fontSize: 20 },
+            legend: { position: "right", labels: { fontColor: "gray" }, display: true },
+            elements: { hitRadius: 3 }
+        }
+    });
+
+    let income_vs_category_chart = new Chart(income_vs_category, {
+        type: 'bar',
+        data: {
+            labels: ['investment', 'rent', 'salary', 'side_hustle'],
+            datasets: [{
+                label: "Categories Of Income",
+                data: income_category_data,
+                backgroundColor: ['#5DA5DA ', '#FAA43A', '#60BD68',
+                    '#B276B2', '#E16851', '#FB8267'],
+                borderWidth: 1,
+                hoverBorderColor: "black",
+                hoverBorderWidth: 2,
+                hoverBackgroundColor: 'rgba(154, 245, 140)',
+                pointHoverRadius: 5
+            }],
+        },
+        options: {
+            title: { display: true, text: "Income Categories", fontSize: 20 },
+            legend: { position: "right", labels: { fontColor: "gray" }, display: true },
+            elements: { hitRadius: 3 }
+        }
+    });
+
+    over_time_expenditure = JSON.parse({{ over_time_expenditure | tojson }});
+    labels = JSON.parse({{ dates_label | tojson }});
+
+    new Chart(document.getElementById("overtime_expenditure"), {
+        type: "line",
+        data: {
+            labels: labels,
+            datasets: [{
+                label: "Expenditure Over Time",
+                data: over_time_expenditure,
+                fill: false,
+                borderColor: "rgb(75, 192, 192)",
+                lineTension: 0.1
+            }]
+        },
+        options: {}
+    });
+
+    // AI Insights Fetching
+    document.getElementById("getInsights").addEventListener("click", function () {
+        fetch("/gemini_insights", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" }
+        })
+        .then(response => response.json())
+        .then(data => {
+            let insightsText = data.insights || "No insights available.";
+            document.getElementById("aiOutput").innerHTML = formatInsights(insightsText);
+        })
+        .catch(error => {
+            console.error("Error fetching AI insights:", error);
+            document.getElementById("aiOutput").innerText = "Failed to fetch insights.";
+        });
+    });
+
+    function formatInsights(text) {
+    var formattedText = text.replace(/\\(.?)\\*/g, '<strong style="color: black; font-size: 18px;">$1</strong>'); // Bold headings
+    formattedText = formattedText.replace(/\n\d+\.\s/g, '<br><strong style="color: blue;">$&</strong>'); // Numbered points styling
+    formattedText = formattedText.replace(/\n/g, '<br>'); // Convert new lines to breaks
+
+    return '<div style="font-family: Arial, sans-serif; font-size: 16px; line-height: 1.6; color: #444;">' +
+           '<p style="font-weight: bold; font-size: 20px; color: #222;">Insights:</p>' +
+           '<p>' + formattedText + '</p>' +
+           '</div>';
+}
+</script>
+{% endblock %}
+
+{% endblock %}
