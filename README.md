@@ -1,8 +1,8 @@
 <h1> ExpenseTracker </h1>
-<p> <h1>Overview</h1><br>
+<p> <h1>Overview</h1>
 This project is a web-based application designed to help users track their income and expenses efficiently. It provides a clear breakdown of financial transactions, categorized into income and expenses, and visualizes financial trends over time.
 
-<h1>Key Features<h1><br>
+<h1>Key Features<h1>
 <h4>Transaction Management</h4><br>
 Users can log their income and expenses.<br>
 Each transaction includes details like date, type (income/expense), category, and amount.<br>
