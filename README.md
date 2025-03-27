@@ -15,6 +15,7 @@ A line graph to track expenditure trends over time.<br>
 The app provides automated financial analysis and suggestions.<br>
 Users can click a button to fetch AI-driven insights about their spending patterns.<br>
 The AI detects possible errors or inconsistencies in expenses and offers saving tips.</p><br>
+  
 ![Screenshot 2025-03-27 093050](https://github.com/user-attachments/assets/6c5cd08f-431b-4780-ac66-a5dec07bbcf7)
 ![Screenshot 2025-03-27 092654](https://github.com/user-attachments/assets/097ecb01-d5c8-4c09-9abf-8cce164e238f)
 ![Screenshot 2025-03-27 092735](https://github.com/user-attachments/assets/52f921b3-da30-4f72-8c3a-d2fd467490e6)
